@@ -9,16 +9,30 @@ import (
 )
 
 func main() {
-	// Client HTTP avec un timeout pour éviter de bloquer indéfiniment.
 	client := &http.Client{
 		Timeout: time.Second * 10,
 	}
-
 	id := "1"
 
+
+
+
+
+routeur()
+
+
+
+
+
+
+
+
+
+
+
+	//affiche les details du pokemon 
 	character, err := getCharacter(client, id)
 	if err != nil {
-		// Gestion différente selon l'erreur retournée.
 		switch {
 		case errors.Is(err, ErrNotFound):
 			log.Fatalf("Personnage %q introuvable, vérifiez l'id.", id)
@@ -39,6 +53,12 @@ func main() {
 
 	fmt.Println(*character)
 
+
+
+
+
+/*
+//affiche la liste des pokemons
 	list, err := getList(client)
 	if err != nil {
 		switch {
@@ -57,5 +77,5 @@ func main() {
 		}
 	}
 
-	fmt.Println(*list)
+	fmt.Println(*list) */
 }

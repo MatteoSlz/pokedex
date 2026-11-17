@@ -1,3 +1,3 @@
-module capsule
+module pokedex
 
 go 1.26.2

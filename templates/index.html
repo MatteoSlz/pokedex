@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Pokémon</title>
+</head>
+<body>
+    <h1>Pokédex</h1>
+    
+    {{range .}}
+        <div>
+            <p>ID : {{.ID}} - <a href="/pokemon/{{.ID}}">{{.Name}}</a></p>
+            <img src="{{.Image}}" alt="{{.Name}}">
+        </div>
+        <hr>
+    {{end}}
+</body>
+</html>

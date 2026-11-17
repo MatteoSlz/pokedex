@@ -44,23 +44,24 @@ func getCharacter(client *http.Client, id string) (*Character, error) {
 }
 
 func getList(client *http.Client) (*List, error) {
-	// Préparation de la requête GET.
-	request, err := http.NewRequest(http.MethodGet, baseURL, nil)
+	// Ajout de ?limit=10000 pour récupérer tous les Pokémon
+	endpoint := fmt.Sprintf("%s?limit=10000&offset=0", baseURL)
+
+	// Préparation de la requête GET avec endpoint au lieu de baseURL
+	request, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
 		return nil, ErrRequestCreation
 	}
 
-	// Envoi de la requête.
+	// Le reste de votre fonction reste identique...
 	response, err := client.Do(request)
 	if err != nil {
 		return nil, ErrRequestSend
 	}
 	defer response.Body.Close()
 
-	// Vérification du code de statut HTTP.
 	switch response.StatusCode {
 	case http.StatusOK:
-		// Succès : on continue vers le décodage.
 	case http.StatusNotFound:
 		return nil, ErrNotFound
 	case http.StatusInternalServerError:
@@ -69,7 +70,6 @@ func getList(client *http.Client) (*List, error) {
 		return nil, ErrUnexpectedState
 	}
 
-	// Décodage du JSON dans la structure List.
 	var list List
 	if err := json.NewDecoder(response.Body).Decode(&list); err != nil {
 		return nil, ErrDecode
@@ -77,3 +77,4 @@ func getList(client *http.Client) (*List, error) {
 
 	return &list, nil
 }
+
