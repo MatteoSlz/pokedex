@@ -1,4 +1,4 @@
-package main
+package routes
 
 import (
 	"errors"
@@ -6,11 +6,13 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"pokedex/models"
+	"pokedex/services"
 	"strings"
 	"time"
 )
 
-func routeur() {
+func Routeur() {
 	client := http.Client{
 		Timeout: 10 * time.Second,
 	}
@@ -23,7 +25,7 @@ func routeur() {
 			return
 		}
 
-		liste, err := getList(&client)
+		liste, err := services.GetList(&client)
 		if err != nil {
 			http.Error(w, "Erreur lors de la récupération", 500)
 			return
@@ -33,16 +35,15 @@ func routeur() {
 			liste.Results = liste.Results[:151]
 		}
 
-		var pokemons []PokemonItem
+		var pokemons []models.PokemonItem
 		for _, p := range liste.Results {
 			parts := strings.Split(strings.TrimSuffix(p.URL, "/"), "/")
 			id := parts[len(parts)-1]
 
-			pokemons = append(pokemons, PokemonItem{
+			pokemons = append(pokemons, models.PokemonItem{
 				ID:    id,
 				Name:  p.Name,
-				Image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + id + ".png",
-
+				Image: "https://githubusercontent.com" + id + ".png",
 			})
 		}
 
@@ -58,13 +59,13 @@ func routeur() {
 	mux.HandleFunc("GET /pokemon/{id}", func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
 
-		perso, err := getCharacter(&client, id)
+		perso, err := services.GetCharacter(&client, id)
 		if err != nil {
-			if errors.Is(err, ErrNotFound) {
+			if errors.Is(err, models.ErrNotFound) {
 				http.Error(w, "Pokemon introuvable", 404)
 				return
 			}
-			if errors.Is(err, ErrInvalidID) {
+			if errors.Is(err, models.ErrInvalidID) {
 				http.Error(w, "ID invalide", 400)
 				return
 			}

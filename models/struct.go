@@ -1,7 +1,4 @@
-package main 
-
-import (
-)
+package models
 
 type PokemonItem struct {
 	ID    string
@@ -43,7 +40,6 @@ type Results struct {
 	URL  string `json:"url"`
 }
 
-
 type List struct {
-	Results  []Results `json:"results"`
+	Results []Results `json:"results"`
 }

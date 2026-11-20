@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"pokedex/models"
+	"pokedex/routes"
+	"pokedex/services"
 	"time"
 )
 
@@ -14,34 +17,22 @@ func main() {
 	}
 	id := "1"
 
+	routes.Routeur()
 
-
-
-
-routeur()
-
-
-
-
-
-
-
-
-
-	character, err := getCharacter(client, id)
+	character, err := services.GetCharacter(client, id)
 	if err != nil {
 		switch {
-		case errors.Is(err, ErrNotFound):
+		case errors.Is(err, models.ErrNotFound):
 			log.Fatalf("Personnage %q introuvable, vérifiez l'id.", id)
-		case errors.Is(err, ErrInvalidID):
+		case errors.Is(err, models.ErrInvalidID):
 			log.Fatalf("L'id %q n'est pas valide (un nombre est attendu).", id)
-		case errors.Is(err, ErrRequestCreation):
+		case errors.Is(err, models.ErrRequestCreation):
 			log.Fatalf("Problème interne lors de la création de la requête.")
-		case errors.Is(err, ErrRequestSend):
+		case errors.Is(err, models.ErrRequestSend):
 			log.Fatalf("Impossible de joindre l'API, vérifiez votre connexion.")
-		case errors.Is(err, ErrDecode):
+		case errors.Is(err, models.ErrDecode):
 			log.Fatalf("La réponse de l'API est illisible.")
-		case errors.Is(err, ErrUnexpectedState):
+		case errors.Is(err, models.ErrUnexpectedState):
 			log.Fatalf("L'API a renvoyé une réponse inattendue.")
 		default:
 			log.Fatalf("Erreur inconnue : %v", err)

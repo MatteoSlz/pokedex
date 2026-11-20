@@ -1,74 +1,73 @@
-package main 
+package services
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"pokedex/api"
+	"pokedex/models"
 )
 
-func getCharacter(client *http.Client, id string) (*Character, error) {
-	endpoint := fmt.Sprintf("%s/%v", baseURL, id)
+func GetCharacter(client *http.Client, id string) (*models.Character, error) {
+	endpoint := fmt.Sprintf("%s/%v", api.BaseURL, id)
 
 	request, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
-		return nil, ErrRequestCreation
+		return nil, models.ErrRequestCreation
 	}
-
 
 	response, err := client.Do(request)
 	if err != nil {
-		return nil, ErrRequestSend
+		return nil, models.ErrRequestSend
 	}
 	defer response.Body.Close()
 
 	switch response.StatusCode {
 	case http.StatusOK:
-	
 	case http.StatusNotFound:
-		return nil, ErrNotFound
+		return nil, models.ErrNotFound
 	case http.StatusInternalServerError:
-		return nil, ErrInvalidID
+		return nil, models.ErrInvalidID
 	default:
-		return nil, ErrUnexpectedState
+		return nil, models.ErrUnexpectedState
 	}
 
-	var character Character
+	var character models.Character
 	if err := json.NewDecoder(response.Body).Decode(&character); err != nil {
-		return nil, ErrDecode
+		return nil, models.ErrDecode
 	}
 
 	return &character, nil
 }
 
-func getList(client *http.Client) (*List, error) {
-	endpoint := fmt.Sprintf("%s?limit=10000&offset=0", baseURL)
+func GetList(client *http.Client) (*models.List, error) {
+	endpoint := fmt.Sprintf("%s?limit=10000&offset=0", api.BaseURL)
 
 	request, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
-		return nil, ErrRequestCreation
+		return nil, models.ErrRequestCreation
 	}
 
 	response, err := client.Do(request)
 	if err != nil {
-		return nil, ErrRequestSend
+		return nil, models.ErrRequestSend
 	}
 	defer response.Body.Close()
 
 	switch response.StatusCode {
 	case http.StatusOK:
 	case http.StatusNotFound:
-		return nil, ErrNotFound
+		return nil, models.ErrNotFound
 	case http.StatusInternalServerError:
-		return nil, ErrInvalidID
+		return nil, models.ErrInvalidID
 	default:
-		return nil, ErrUnexpectedState
+		return nil, models.ErrUnexpectedState
 	}
 
-	var list List
+	var list models.List
 	if err := json.NewDecoder(response.Body).Decode(&list); err != nil {
-		return nil, ErrDecode
+		return nil, models.ErrDecode
 	}
 
 	return &list, nil
 }
-

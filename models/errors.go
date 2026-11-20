@@ -1,10 +1,8 @@
-package main 
+package models
 
 import (
 	"errors"
 )
-
-const baseURL = "https://pokeapi.co/api/v2/pokemon"
 
 var (
 	ErrRequestCreation = errors.New("impossible de créer la requête")
