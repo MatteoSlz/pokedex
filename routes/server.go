@@ -1,3 +1,4 @@
+
 package routes
 
 import (
@@ -19,7 +20,12 @@ func Routeur() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+	// FICHIERS CSS
+	mux.Handle("/assets/", http.StripPrefix("/assets/",
+		http.FileServer(http.Dir("assets"))))
+
+	// PAGE D'ACCUEIL
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
 			http.NotFound(w, r)
 			return
@@ -27,7 +33,8 @@ func Routeur() {
 
 		liste, err := services.GetList(&client)
 		if err != nil {
-			http.Error(w, "Erreur lors de la récupération", 500)
+			log.Printf("ERREUR GetList : %v", err)
+			http.Error(w, "Erreur lors de la récupération : "+err.Error(), 500)
 			return
 		}
 
@@ -36,6 +43,7 @@ func Routeur() {
 		}
 
 		var pokemons []models.PokemonItem
+
 		for _, p := range liste.Results {
 			parts := strings.Split(strings.TrimSuffix(p.URL, "/"), "/")
 			id := parts[len(parts)-1]
@@ -43,43 +51,59 @@ func Routeur() {
 			pokemons = append(pokemons, models.PokemonItem{
 				ID:    id,
 				Name:  p.Name,
-				Image: "https://githubusercontent.com" + id + ".png",
+				Image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + id + ".png",
 			})
 		}
 
 		tmpl, err := template.ParseFiles("templates/index.html")
 		if err != nil {
-			http.Error(w, "Erreur template", 500)
+			log.Printf("ERREUR Template index : %v", err)
+			http.Error(w, "Erreur template : "+err.Error(), 500)
 			return
 		}
 
-		tmpl.Execute(w, pokemons)
+		if err := tmpl.Execute(w, pokemons); err != nil {
+			log.Printf("ERREUR Execute index : %v", err)
+		}
 	})
 
-	mux.HandleFunc("GET /pokemon/{id}", func(w http.ResponseWriter, r *http.Request) {
-		id := r.PathValue("id")
+	// PAGE DETAIL POKEMON
+	mux.HandleFunc("/pokemon/", func(w http.ResponseWriter, r *http.Request) {
+		id := strings.TrimPrefix(r.URL.Path, "/pokemon/")
+
+		if id == "" || strings.Contains(id, "/") {
+			http.NotFound(w, r)
+			return
+		}
 
 		perso, err := services.GetCharacter(&client, id)
 		if err != nil {
+			log.Printf("ERREUR GetCharacter : %v", err)
+
 			if errors.Is(err, models.ErrNotFound) {
 				http.Error(w, "Pokemon introuvable", 404)
 				return
 			}
+
 			if errors.Is(err, models.ErrInvalidID) {
 				http.Error(w, "ID invalide", 400)
 				return
 			}
-			http.Error(w, "Erreur serveur", 500)
+
+			http.Error(w, "Erreur serveur : "+err.Error(), 500)
 			return
 		}
 
 		tmpl, err := template.ParseFiles("templates/detail.html")
 		if err != nil {
-			http.Error(w, "Erreur template", 500)
+			log.Printf("ERREUR Template detail : %v", err)
+			http.Error(w, "Erreur template : "+err.Error(), 500)
 			return
 		}
 
-		tmpl.Execute(w, perso)
+		if err := tmpl.Execute(w, perso); err != nil {
+			log.Printf("ERREUR Execute detail : %v", err)
+		}
 	})
 
 	fmt.Println("Serveur lancé sur le port 8080...")

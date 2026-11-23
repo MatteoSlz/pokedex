@@ -1,3 +1,3 @@
-package api
+	package api
 
-const BaseURL = "https://pokeapi.co"
+	const BaseURL = "https://pokeapi.co/api/v2/pokemon"

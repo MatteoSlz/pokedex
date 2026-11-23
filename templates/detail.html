@@ -1,12 +1,50 @@
+
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
-    <title>{{.Name}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Name}} - Pokédex</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
+
 <body>
-    <a href="/">Retour à la liste</a>
-    <h1>{{.Id}} - {{.Name}}</h1>
-    <img src="{{.Sprites.FrontDefault}}" alt="{{.Name}}">
+
+    <div class="detail-card">
+
+        <a href="/" class="back">← Retour au Pokédex</a>
+
+        <h1>#{{.Id}} - {{.Name}}</h1>
+
+        {{if .Sprites.FrontDefault}}
+            <img src="{{.Sprites.FrontDefault}}" alt="{{.Name}}">
+        {{end}}
+
+        <h2>Types</h2>
+
+        <ul>
+            {{range .Types}}
+                <li>{{.Type.Name}}</li>
+            {{else}}
+                <li>Aucun type disponible</li>
+            {{end}}
+        </ul>
+
+        <h2>Statistiques</h2>
+
+        <ul>
+            {{range .Stats}}
+                <li>
+                    <strong>{{.Stat.Name}} :</strong>
+                    {{.BaseStat}}
+                </li>
+            {{else}}
+                <li>Aucune statistique disponible</li>
+            {{end}}
+        </ul>
+
+    </div>
+
 </body>
 </html>

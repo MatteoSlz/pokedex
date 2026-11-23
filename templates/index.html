@@ -1,18 +1,26 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Liste des Pokémon</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
+
 <body>
-    <h1>Pokédex</h1>
-    
-    {{range .}}
-        <div>
-            <p>ID : {{.ID}} - <a href="/pokemon/{{.ID}}">{{.Name}}</a></p>
-            <img src="{{.Image}}" alt="{{.Name}}">
-        </div>
-        <hr>
-    {{end}}
+
+    <h1> Pokédex </h1>
+
+    <div class="pokedex">
+        {{range .}}
+            <div class="pokemon-card">
+                <p>#{{.ID}}</p>
+                <img src="{{.Image}}" alt="{{.Name}}">
+                <a href="/pokemon/{{.ID}}">{{.Name}}</a>
+            </div>
+        {{end}}
+    </div>
+
 </body>
 </html>
