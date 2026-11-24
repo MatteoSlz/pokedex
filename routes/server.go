@@ -20,11 +20,8 @@ func Routeur() {
 
 	mux := http.NewServeMux()
 
-	// FICHIERS CSS
 	mux.Handle("/assets/", http.StripPrefix("/assets/",
 		http.FileServer(http.Dir("assets"))))
-
-	// PAGE D'ACCUEIL
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
 			http.NotFound(w, r)
@@ -67,7 +64,6 @@ func Routeur() {
 		}
 	})
 
-	// PAGE DETAIL POKEMON
 	mux.HandleFunc("/pokemon/", func(w http.ResponseWriter, r *http.Request) {
 		id := strings.TrimPrefix(r.URL.Path, "/pokemon/")
 
